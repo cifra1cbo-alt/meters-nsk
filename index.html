@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>meters-nsk — Заполним вакантный объект КН в Новосибирске за 30 дней</title>
+<meta name="description" content="Точечные AI-кампании по целевым арендаторам коммерческой недвижимости в Новосибирске. Оплата по результату. Reply rate в 3–5 раз выше рыночного.">
+<meta name="robots" content="index,follow">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="meters-nsk — Заполним вакантный объект КН за 30 дней">
+<meta property="og:description" content="AI-outreach для собственников коммерческой недвижимости в Новосибирске. Оплата по результату.">
+<meta property="og:url" content="https://meters-nsk.ru">
+<meta property="og:locale" content="ru_RU">
+
+<!-- Favicon (placeholder — заменить на настоящий) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231A1A1A'/%3E%3Ctext x='50' y='62' font-family='sans-serif' font-size='50' font-weight='bold' fill='%23FF5722' text-anchor='middle'%3Em%3C/text%3E%3C/svg%3E">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Яндекс.Метрика — ВСТАВИТЬ КОД СЧЁТЧИКА СЮДА -->
+<!-- <script type="text/javascript">...</script> -->
+
+<style>
+/* ================= BASE ================= */
+:root {
+  --black: #0A0A0A;
+  --charcoal: #1A1A1A;
+  --graphite: #2B2B2B;
+  --mid: #6B6B6B;
+  --light: #E5E5E5;
+  --hairline: #D4D4D4;
+  --off: #FAFAFA;
+  --white: #FFFFFF;
+  --orange: #FF5722;
+  --orange-dk: #D9431A;
+  --blue: #2196F3;
+
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-body: 'Onest', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --max-w: 1280px;
+  --gutter: clamp(20px, 4vw, 48px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--charcoal);
+  background: var(--off);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; border: none; background: none; cursor: pointer; }
+
+/* ================= TYPOGRAPHY ================= */
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mid);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--mid);
+}
+
+/* ================= LAYOUT ================= */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+.section { padding: clamp(80px, 10vw, 140px) 0; }
+.section--dark { background: var(--charcoal); color: var(--off); }
+.section--dark .eyebrow { color: #999; }
+.section--dark .eyebrow::before { background: #999; }
+
+/* ================= HEADER ================= */
+.header {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 0;
+  background: rgba(250, 250, 250, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--hairline);
+}
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.logo__dot { color: var(--orange); }
+.header__nav { display: flex; gap: 32px; }
+.header__nav a { font-size: 14px; color: var(--mid); transition: color 0.2s; }
+.header__nav a:hover { color: var(--charcoal); }
+.header__cta {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  background: var(--charcoal);
+  color: var(--off);
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.header__cta:hover { background: var(--orange); }
+
+@media (max-width: 768px) {
+  .header__nav { display: none; }
+}
+
+/* ================= HERO ================= */
+.hero {
+  padding: clamp(140px, 18vw, 200px) 0 clamp(80px, 10vw, 120px);
+  position: relative;
+  overflow: hidden;
+}
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+.hero__left .eyebrow { margin-bottom: 24px; }
+.hero__title {
+  font-size: clamp(42px, 6.5vw, 88px);
+  font-weight: 800;
+  margin-bottom: 32px;
+}
+.hero__title .accent { color: var(--orange); }
+.hero__lede {
+  font-size: clamp(17px, 1.8vw, 21px);
+  color: var(--mid);
+  max-width: 540px;
+  margin-bottom: 48px;
+  line-height: 1.5;
+}
+.hero__actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn--primary {
+  background: var(--orange);
+  color: var(--white);
+}
+.btn--primary:hover {
+  background: var(--orange-dk);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 87, 34, 0.3);
+}
+.btn--secondary {
+  background: transparent;
+  color: var(--charcoal);
+  border: 1px solid var(--hairline);
+}
+.btn--secondary:hover {
+  border-color: var(--charcoal);
+  background: var(--charcoal);
+  color: var(--off);
+}
+.btn--dark {
+  background: var(--off);
+  color: var(--charcoal);
+}
+.btn--dark:hover { background: var(--orange); color: var(--white); }
+
+/* Hero proof block */
+.hero__proof {
+  padding: 40px 36px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  background: var(--white);
+  position: relative;
+}
+.hero__proof::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 40px; height: 40px;
+  border-top: 2px solid var(--orange);
+  border-left: 2px solid var(--orange);
+}
+.proof-number {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(64px, 9vw, 112px);
+  line-height: 0.9;
+  margin-bottom: 8px;
+  letter-spacing: -0.04em;
+}
+.proof-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mid);
+  margin-bottom: 24px;
+}
+.proof-divider {
+  height: 1px;
+  background: var(--hairline);
+  margin: 24px 0;
+}
+.proof-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.proof-stat:last-child { margin-bottom: 0; }
+.proof-stat__label { color: var(--mid); }
+.proof-stat__value {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--charcoal);
+}
+
+@media (max-width: 900px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
+
+/* ================= PROBLEM ================= */
+.problem {
+  background: var(--charcoal);
+  color: var(--off);
+}
+.problem__header {
+  margin-bottom: 80px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 48px;
+  align-items: end;
+}
+.problem__title {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+}
+.problem__intro {
+  font-size: 17px;
+  color: #AAA;
+  max-width: 520px;
+}
+.problem__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #333;
+  border: 1px solid #333;
+}
+.problem__card {
+  background: var(--charcoal);
+  padding: 48px 36px;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+.problem__card-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--orange);
+  margin-bottom: 24px;
+  letter-spacing: 0.05em;
+}
+.problem__card-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+.problem__card-text {
+  color: #B8B8B8;
+  font-size: 15.5px;
+  line-height: 1.6;
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {
+  .problem__header { grid-template-columns: 1fr; gap: 24px; }
+  .problem__grid { grid-template-columns: 1fr; }
+}
+
+/* ================= HOW IT WORKS ================= */
+.how__header {
+  margin-bottom: 80px;
+  max-width: 800px;
+}
+.how__header .eyebrow { margin-bottom: 24px; }
+.how__title {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.how__subtitle { font-size: 18px; color: var(--mid); max-width: 600px; }
+
+.how__timeline {
+  position: relative;
+  border-top: 1px solid var(--hairline);
+}
+.how__step {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  gap: 48px;
+  padding: 48px 0;
+  border-bottom: 1px solid var(--hairline);
+  align-items: start;
+  transition: background 0.3s;
+}
+.how__step:hover {
+  background: var(--white);
+}
+.how__step-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--orange);
+  letter-spacing: 0.05em;
+}
+.how__step-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(22px, 2.5vw, 32px);
+  line-height: 1.25;
+}
+.how__step-desc {
+  font-size: 16px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+.how__step-duration {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 10px;
+  background: var(--light);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--charcoal);
+}
+
+@media (max-width: 900px) {
+  .how__step {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* ================= CASE ================= */
+.case {
+  background: var(--black);
+  color: var(--off);
+  overflow: hidden;
+}
+.case__layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.case__header .eyebrow { margin-bottom: 32px; }
+.case__title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 700;
+  margin-bottom: 40px;
+  line-height: 1.1;
+}
+.case__title span.thin { font-weight: 500; color: #999; }
+
+.case__story {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.case__beat {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid #2A2A2A;
+}
+.case__beat-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  padding-top: 4px;
+}
+.case__beat-text {
+  font-size: 16.5px;
+  line-height: 1.55;
+}
+.case__beat-text strong { font-weight: 600; color: var(--white); }
+
+.case__metrics {
+  background: var(--graphite);
+  padding: 48px 40px;
+  border-radius: 2px;
+  position: relative;
+}
+.case__metrics::before {
+  content: "";
+  position: absolute;
+  top: -1px; right: -1px;
+  width: 40px; height: 40px;
+  border-top: 2px solid var(--orange);
+  border-right: 2px solid var(--orange);
+}
+.case__metric { margin-bottom: 32px; }
+.case__metric:last-child { margin-bottom: 0; }
+.case__metric-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 8px;
+}
+.case__metric-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.case__metric-unit {
+  font-size: 13px;
+  color: #999;
+}
+.case__metric--highlight .case__metric-value { color: var(--orange); }
+
+@media (max-width: 900px) {
+  .case__layout { grid-template-columns: 1fr; gap: 48px; }
+}
+
+/* ================= PRICING ================= */
+.pricing__header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+.pricing__header .eyebrow { margin-bottom: 24px; }
+.pricing__title {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.pricing__sub { font-size: 17px; color: var(--mid); max-width: 600px; margin: 0 auto; }
+
+.pricing__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.tier {
+  background: var(--white);
+  border: 1px solid var(--hairline);
+  padding: 40px 32px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+.tier:hover {
+  border-color: var(--charcoal);
+  transform: translateY(-4px);
+}
+.tier--featured {
+  background: var(--charcoal);
+  color: var(--off);
+  border-color: var(--charcoal);
+  position: relative;
+}
+.tier--featured::before {
+  content: "РЕКОМЕНДУЕМ";
+  position: absolute;
+  top: -12px;
+  left: 32px;
+  background: var(--orange);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  border-radius: 2px;
+}
+.tier--featured:hover { border-color: var(--orange); }
+.tier__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.tier__for {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mid);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 32px;
+}
+.tier--featured .tier__for { color: #999; }
+.tier__price-main {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.tier__price-label {
+  font-size: 13px;
+  color: var(--mid);
+  margin-bottom: 24px;
+}
+.tier--featured .tier__price-label { color: #AAA; }
+.tier__price-plus {
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+  margin-bottom: 32px;
+}
+.tier--featured .tier__price-plus { border-top-color: #333; }
+.tier__price-plus-value {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.tier__price-plus-label {
+  font-size: 13px;
+  color: var(--mid);
+}
+.tier--featured .tier__price-plus-label { color: #AAA; }
+.tier__features {
+  list-style: none;
+  margin-bottom: 32px;
+  flex-grow: 1;
+}
+.tier__features li {
+  padding: 10px 0;
+  padding-left: 28px;
+  position: relative;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.tier__features li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 17px;
+  width: 14px; height: 1px;
+  background: var(--orange);
+}
+.tier__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 4px;
+  background: var(--off);
+  color: var(--charcoal);
+  border: 1px solid var(--hairline);
+  transition: all 0.2s;
+  text-align: center;
+}
+.tier__cta:hover {
+  background: var(--charcoal);
+  color: var(--off);
+  border-color: var(--charcoal);
+}
+.tier--featured .tier__cta {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+.tier--featured .tier__cta:hover {
+  background: var(--orange-dk);
+  border-color: var(--orange-dk);
+}
+
+.pricing__guarantee {
+  text-align: center;
+  padding: 24px;
+  border: 1px dashed var(--hairline);
+  border-radius: 2px;
+  font-size: 15px;
+  color: var(--mid);
+}
+.pricing__guarantee strong { color: var(--charcoal); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .pricing__grid { grid-template-columns: 1fr; }
+  .tier--featured { order: -1; }
+}
+
+/* ================= FAQ ================= */
+.faq__layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 80px;
+  align-items: start;
+}
+.faq__title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  position: sticky;
+  top: 120px;
+}
+.faq__title .eyebrow { display: block; margin-bottom: 24px; }
+
+.faq__list { list-style: none; }
+.faq__item {
+  border-top: 1px solid var(--hairline);
+  padding: 24px 0;
+}
+.faq__item:last-child { border-bottom: 1px solid var(--hairline); }
+.faq__question {
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.35;
+  padding: 0;
+  padding-right: 40px;
+  position: relative;
+  color: var(--charcoal);
+  letter-spacing: -0.01em;
+}
+.faq__question::after {
+  content: "+";
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: var(--orange);
+  font-weight: 400;
+  transition: transform 0.25s ease;
+}
+.faq__item[open] .faq__question::after {
+  transform: translateY(-50%) rotate(45deg);
+}
+.faq__answer {
+  padding-top: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--mid);
+  max-width: 620px;
+}
+
+@media (max-width: 900px) {
+  .faq__layout { grid-template-columns: 1fr; gap: 32px; }
+  .faq__title { position: static; }
+}
+
+/* ================= FORM ================= */
+.form-section {
+  background: var(--charcoal);
+  color: var(--off);
+  position: relative;
+  overflow: hidden;
+}
+.form-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.form-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 80px;
+  position: relative;
+  z-index: 1;
+}
+.form-intro .eyebrow { color: #999; margin-bottom: 32px; }
+.form-intro .eyebrow::before { background: #999; }
+.form-intro__title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  margin-bottom: 32px;
+  line-height: 1.1;
+}
+.form-intro__desc {
+  font-size: 17px;
+  color: #B8B8B8;
+  margin-bottom: 32px;
+  line-height: 1.55;
+}
+.form-intro__perks { list-style: none; margin-bottom: 32px; }
+.form-intro__perks li {
+  padding: 12px 0;
+  padding-left: 28px;
+  position: relative;
+  border-top: 1px solid #2A2A2A;
+  font-size: 15px;
+  color: #DDD;
+}
+.form-intro__perks li:last-child { border-bottom: 1px solid #2A2A2A; }
+.form-intro__perks li::before {
+  content: "→";
+  position: absolute;
+  left: 0; top: 12px;
+  color: var(--orange);
+  font-weight: 500;
+}
+
+/* Form fields */
+.form-card {
+  background: var(--graphite);
+  padding: 48px;
+  border-radius: 2px;
+}
+.form-group { margin-bottom: 24px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+.form-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #999;
+  margin-bottom: 10px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--charcoal);
+  border: 1px solid #3A3A3A;
+  border-radius: 3px;
+  color: var(--off);
+  font-family: var(--font-body);
+  font-size: 15px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--orange);
+  background: var(--black);
+}
+.form-input::placeholder { color: #666; }
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='%23999'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 16px) center;
+  background-size: 12px;
+  padding-right: 40px;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 28px;
+  font-size: 13.5px;
+  color: #AAA;
+  line-height: 1.5;
+}
+.form-checkbox input {
+  width: 18px; height: 18px;
+  accent-color: var(--orange);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.form-checkbox a {
+  color: var(--orange);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 87, 34, 0.3);
+  text-underline-offset: 3px;
+}
+
+.form-submit {
+  width: 100%;
+  padding: 20px;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 3px;
+  transition: all 0.2s;
+  font-family: inherit;
+  cursor: pointer;
+}
+.form-submit:hover {
+  background: var(--orange-dk);
+  transform: translateY(-1px);
+}
+.form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.form-note {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .form-layout { grid-template-columns: 1fr; gap: 48px; }
+  .form-card { padding: 32px 24px; }
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  background: var(--black);
+  color: #B8B8B8;
+  padding: 64px 0 40px;
+  font-size: 14px;
+}
+.footer__top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid #222;
+  margin-bottom: 32px;
+}
+.footer__brand { max-width: 400px; }
+.footer__brand .logo { color: var(--white); margin-bottom: 16px; }
+.footer__tagline { color: #888; line-height: 1.6; }
+
+.footer__col h4 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #666;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.footer__col ul { list-style: none; }
+.footer__col li { margin-bottom: 10px; }
+.footer__col a { color: #CCC; transition: color 0.2s; }
+.footer__col a:hover { color: var(--orange); }
+
+.footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer__bottom a { color: #888; }
+.footer__bottom a:hover { color: var(--orange); }
+
+@media (max-width: 700px) {
+  .footer__top { grid-template-columns: 1fr; gap: 32px; }
+}
+
+/* ================= ANIMATIONS ================= */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .reveal--delay-1 { transition-delay: 0.1s; }
+  .reveal--delay-2 { transition-delay: 0.2s; }
+  .reveal--delay-3 { transition-delay: 0.3s; }
+}
+
+/* Selection */
+::selection { background: var(--orange); color: var(--white); }
+</style>
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="container header__inner">
+    <a href="/" class="logo">meters-nsk<span class="logo__dot">.</span></a>
+    <nav class="header__nav">
+      <a href="#how">Как работаем</a>
+      <a href="#case">Кейс</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a href="#form" class="header__cta">Получить расчёт</a>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero__grid">
+      <div class="hero__left">
+        <div class="eyebrow reveal">AI-outreach · Новосибирск</div>
+        <h1 class="hero__title reveal reveal--delay-1">
+          Заполним вакантный объект КН в Новосибирске за <span class="accent">30 дней</span>
+        </h1>
+        <p class="hero__lede reveal reveal--delay-2">
+          Точечные AI-кампании по базе целевых арендаторов. Не ждём,
+          пока объект увидят на ЦИАН — сами идём к тем, кому он нужен.
+          Основная часть гонорара платится только после подписания договора аренды.
+        </p>
+        <div class="hero__actions reveal reveal--delay-3">
+          <a href="#form" class="btn btn--primary">
+            Получить расчёт
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><path d="M12 1l5 5-5 5M17 6H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </a>
+          <a href="#case" class="btn btn--secondary">Посмотреть кейс</a>
+        </div>
+      </div>
+
+      <div class="hero__proof reveal reveal--delay-2">
+        <div class="proof-label">Reply rate vs. рынок</div>
+        <div class="proof-number">3–5×</div>
+        <div class="proof-divider"></div>
+        <div class="proof-stat">
+          <span class="proof-stat__label">Шаблонная рассылка</span>
+          <span class="proof-stat__value">0.5–1%</span>
+        </div>
+        <div class="proof-stat">
+          <span class="proof-stat__label">Наша персонализация</span>
+          <span class="proof-stat__value">3–5%</span>
+        </div>
+        <div class="proof-stat">
+          <span class="proof-stat__label">Open rate, средний</span>
+          <span class="proof-stat__value">25–30%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROBLEM ===== -->
+<section class="section problem" id="problem">
+  <div class="container">
+    <div class="problem__header">
+      <div>
+        <div class="eyebrow" style="margin-bottom:24px">Боль рынка</div>
+        <h2 class="problem__title">Почему объект простаивает</h2>
+      </div>
+      <p class="problem__intro">
+        На рынке коммерческой недвижимости классические каналы работают пассивно.
+        Арендатор с бюджетом не листает ЦИАН — его нужно находить активно.
+      </p>
+    </div>
+
+    <div class="problem__grid">
+      <div class="problem__card">
+        <div class="problem__card-num">01 / Каналы</div>
+        <h3 class="problem__card-title">ЦИАН и Авито не дают целевых</h3>
+        <p class="problem__card-text">
+          Доски объявлений — пассивный канал. Арендаторы с реальным бюджетом ищут
+          объект через брокеров и по рекомендации, а не через поиск «сдам помещение».
+        </p>
+      </div>
+      <div class="problem__card">
+        <div class="problem__card-num">02 / Риелторы</div>
+        <h3 class="problem__card-title">Классические агентства берут 50–100%</h3>
+        <p class="problem__card-text">
+          Берут месячную ставку комиссии, но ведут только «тёплых» через свою базу.
+          Активного outbound-поиска целевых арендаторов под ваш объект — нет.
+        </p>
+      </div>
+      <div class="problem__card">
+        <div class="problem__card-num">03 / Цена простоя</div>
+        <h3 class="problem__card-title">80–500 тыс ₽/мес упущено</h3>
+        <p class="problem__card-text">
+          Каждый месяц без арендатора — прямой убыток. Налог на имущество и платежи
+          по ипотеке идут вне зависимости от того, заполнен объект или нет.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="how__header">
+      <div class="eyebrow">Методология · 4 шага</div>
+      <h2 class="how__title">Как мы заполняем объект</h2>
+      <p class="how__subtitle">
+        Гибрид двух подходов: экспертиза в коммерческой недвижимости
+        + технология AI-персонализированных B2B-рассылок.
+      </p>
+    </div>
+
+    <ol class="how__timeline">
+      <li class="how__step">
+        <div class="how__step-num">Шаг 01</div>
+        <h3 class="how__step-title">Анализ и сегментация</h3>
+        <div>
+          <p class="how__step-desc">
+            Изучаем объект, локацию, конкурентные ставки. Определяем 3–5 целевых
+            сегментов арендаторов: под стрит-ритейл — одни, под офис класса B — другие.
+          </p>
+          <span class="how__step-duration">2–3 дня</span>
+        </div>
+      </li>
+      <li class="how__step">
+        <div class="how__step-num">Шаг 02</div>
+        <h3 class="how__step-title">Сбор и обогащение базы</h3>
+        <div>
+          <p class="how__step-desc">
+            Парсим 200–500 компаний из открытых источников — 2ГИС, реестры, корпоративные
+            сайты. Обогащаем контактами ЛПР: ФИО, корпоративный email, телефон, ИНН. Валидируем почты.
+          </p>
+          <span class="how__step-duration">3–5 дней</span>
+        </div>
+      </li>
+      <li class="how__step">
+        <div class="how__step-num">Шаг 03</div>
+        <h3 class="how__step-title">AI-персонализированная рассылка</h3>
+        <div>
+          <p class="how__step-desc">
+            Под каждого получателя Claude API генерирует уникальный «крюк» — 15–25 слов
+            наблюдения про его бизнес. Это письмо читается как личное, не массовое. Follow-up через 4/7/14 дней.
+          </p>
+          <span class="how__step-duration">2–3 недели</span>
+        </div>
+      </li>
+      <li class="how__step">
+        <div class="how__step-num">Шаг 04</div>
+        <h3 class="how__step-title">Тёплые лиды — вам</h3>
+        <div>
+          <p class="how__step-desc">
+            Заинтересованных арендаторов передаём вам сразу — в течение 2 часов
+            в рабочее время. Вы ведёте переговоры и подписываете договор аренды.
+            Мы не водим показы.
+          </p>
+          <span class="how__step-duration">Постоянно</span>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== CASE ===== -->
+<section class="section case" id="case">
+  <div class="container">
+    <div class="case__layout">
+      <div class="case__header">
+        <div class="eyebrow">Кейс · Новосибирск</div>
+        <h2 class="case__title">
+          Объект на Киевской, <span class="thin">120 м²,</span><br>
+          арендатор найден за 21 день
+        </h2>
+
+        <div class="case__story">
+          <div class="case__beat">
+            <div class="case__beat-label">Было</div>
+            <div class="case__beat-text">
+              Вакантно <strong>6 месяцев</strong>. Размещён на ЦИАН и Авито —
+              только 2 нецелевых звонка. Риелторское агентство «отказалось брать в работу».
+            </div>
+          </div>
+          <div class="case__beat">
+            <div class="case__beat-label">Сделали</div>
+            <div class="case__beat-text">
+              Сегмент — локальные кофейни и общепит. База <strong>340 компаний</strong>
+              из 2ГИС и корпоративных сайтов. AI-персонализация первой строки
+              под каждое письмо, 3 волны follow-up.
+            </div>
+          </div>
+          <div class="case__beat">
+            <div class="case__beat-label">Стало</div>
+            <div class="case__beat-text">
+              Арендатор — локальная сеть кофеен «Вдох». Договор подписан
+              на <strong>24 месяца</strong>, ставка +12% к изначальной.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="case__metrics">
+        <div class="case__metric">
+          <div class="case__metric-label">Отправлено писем</div>
+          <div class="case__metric-value">340</div>
+          <div class="case__metric-unit">по 1 сегменту</div>
+        </div>
+        <div class="case__metric">
+          <div class="case__metric-label">Открытий</div>
+          <div class="case__metric-value">47</div>
+          <div class="case__metric-unit">13.8% open rate</div>
+        </div>
+        <div class="case__metric">
+          <div class="case__metric-label">Ответов</div>
+          <div class="case__metric-value">12</div>
+          <div class="case__metric-unit">3.5% reply rate</div>
+        </div>
+        <div class="case__metric">
+          <div class="case__metric-label">Встреч</div>
+          <div class="case__metric-value">4</div>
+          <div class="case__metric-unit">из 12 ответов</div>
+        </div>
+        <div class="case__metric case__metric--highlight">
+          <div class="case__metric-label">Срок до сделки</div>
+          <div class="case__metric-value">21</div>
+          <div class="case__metric-unit">день от первого письма</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="pricing__header">
+      <div class="eyebrow" style="justify-content:center">Три тарифа</div>
+      <h2 class="pricing__title">Оплата по результату</h2>
+      <p class="pricing__sub">
+        Setup — единоразово за работу по сбору базы и запуску. Success fee —
+        процент от первого месяца аренды, платится только после подписания договора.
+      </p>
+    </div>
+
+    <div class="pricing__grid">
+      <div class="tier">
+        <div class="tier__name">Лайт</div>
+        <div class="tier__for">Объект до 100 м²</div>
+        <div class="tier__price-main">40 000 ₽</div>
+        <div class="tier__price-label">Setup, разово</div>
+        <div class="tier__price-plus">
+          <div class="tier__price-plus-value">30%</div>
+          <div class="tier__price-plus-label">Success fee от первого месяца</div>
+        </div>
+        <ul class="tier__features">
+          <li>200–300 писем по сегменту</li>
+          <li>AI-персонализация первой строки</li>
+          <li>1 волна + 2 follow-up</li>
+          <li>Еженедельные отчёты</li>
+          <li>Доступ к логам рассылки</li>
+        </ul>
+        <a href="#form" class="tier__cta">Выбрать «Лайт»</a>
+      </div>
+
+      <div class="tier tier--featured">
+        <div class="tier__name">Стандарт</div>
+        <div class="tier__for" style="color:#999">Объект 100–300 м²</div>
+        <div class="tier__price-main">60 000 ₽</div>
+        <div class="tier__price-label" style="color:#AAA">Setup + 25 000 ₽/мес</div>
+        <div class="tier__price-plus">
+          <div class="tier__price-plus-value">20%</div>
+          <div class="tier__price-plus-label" style="color:#AAA">Success fee от первого месяца</div>
+        </div>
+        <ul class="tier__features">
+          <li>500–800 писем, 2 волны кампаний</li>
+          <li>AI-персонализация первой строки</li>
+          <li>A/B-тестирование сабжектов</li>
+          <li>Еженедельные отчёты в Telegram</li>
+          <li>Дашборд Airtable, read-only</li>
+          <li>Follow-up по «not now» через 3 мес</li>
+        </ul>
+        <a href="#form" class="tier__cta">Выбрать «Стандарт»</a>
+      </div>
+
+      <div class="tier">
+        <div class="tier__name">Премиум</div>
+        <div class="tier__for">Объект 300+ м²</div>
+        <div class="tier__price-main">100 000 ₽</div>
+        <div class="tier__price-label">Setup + 40 000 ₽/мес</div>
+        <div class="tier__price-plus">
+          <div class="tier__price-plus-value">15%</div>
+          <div class="tier__price-plus-label">Success fee от первого месяца</div>
+        </div>
+        <ul class="tier__features">
+          <li>Эксклюзив на объект в сегменте</li>
+          <li>Multi-channel: email + Telegram + тел.</li>
+          <li>Приоритет в работе</li>
+          <li>Персональное сопровождение</li>
+          <li>Расширенная отчётность</li>
+          <li>Закрепление на 12 мес</li>
+        </ul>
+        <a href="#form" class="tier__cta">Выбрать «Премиум»</a>
+      </div>
+    </div>
+
+    <div class="pricing__guarantee">
+      <strong>Гарантия 60 дней.</strong> Не нашли арендатора за 60 дней работы — возвращаем 50% setup-fee. Success fee при этом не начисляется.
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="section" id="faq" style="background:var(--white)">
+  <div class="container">
+    <div class="faq__layout">
+      <div>
+        <h2 class="faq__title">
+          <span class="eyebrow">Вопросы</span>
+          Что чаще всего спрашивают
+        </h2>
+      </div>
+
+      <ul class="faq__list">
+        <li>
+          <details class="faq__item">
+            <summary class="faq__question">А если объект не сдам — потеряю setup?</summary>
+            <div class="faq__answer">
+              Нет. Работает гарантия 60 дней: если за этот срок не нашли арендатора — возвращаем 50% setup.
+              Setup покрывает фактическую работу по сбору базы, написанию писем и ведению кампании,
+              но половину мы возвращаем, если результат не наступил.
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="faq__item">
+            <summary class="faq__question">Как вы собираете контакты арендаторов?</summary>
+            <div class="faq__answer">
+              Только открытые источники: 2ГИС API, корпоративные сайты компаний, реестры ИП/ООО, DaData.
+              Никаких серых баз, утечек или парсинга личных кабинетов. Это важно для юридической
+              чистоты по ФЗ-152 и для репутации доменов.
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="faq__item">
+            <summary class="faq__question">А если арендатор съедет через 2 месяца?</summary>
+            <div class="faq__answer">
+              Success fee фиксируется по факту подписания договора аренды. Но мы закрепляем
+              приведённого арендатора на 12 месяцев: если он съедет раньше, мы даём замену
+              из базы без дополнительной оплаты.
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="faq__item">
+            <summary class="faq__question">Сколько писем пойдёт от моего имени?</summary>
+            <div class="faq__answer">
+              Ноль. Вся рассылка идёт от лица нашего агентства с наших собственных доменов и ящиков.
+              Вас — собственника — показываем только заинтересованным арендаторам на этапе встречи
+              или подписания договора. Ваш email, телефон и ФИО не фигурируют в рассылках.
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="faq__item">
+            <summary class="faq__question">Чем отличаетесь от классических риелторов?</summary>
+            <div class="faq__answer">
+              Мы не водим показы, не торгуемся и не сопровождаем сделку. Мы поставляем тёплых лидов —
+              дальше работу ведёте вы сами или ваш брокер. Комиссия ниже (15–30% против 50–100% у риелторов),
+              потому что мы делаем одну задачу, а не весь цикл. И мы не берём процент при пассивном результате —
+              только после подписания.
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="faq__item">
+            <summary class="faq__question">Сколько времени от старта до первого арендатора?</summary>
+            <div class="faq__answer">
+              Сбор базы и подготовка писем — 5–7 дней. Первая волна рассылки — ещё 7–10 дней до пика
+              ответов. Первые встречи обычно в течение 2–3 недель от старта. Подписание договора аренды —
+              зависит от клиента и арендатора, обычно 3–8 недель с момента первого контакта.
+            </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FORM ===== -->
+<section class="section form-section" id="form">
+  <div class="container">
+    <div class="form-layout">
+      <div class="form-intro">
+        <div class="eyebrow">Свяжитесь с нами</div>
+        <h2 class="form-intro__title">Расчёт по вашему объекту за 2 часа</h2>
+        <p class="form-intro__desc">
+          Оставьте параметры объекта — позвоним в течение 2 часов в рабочее время
+          и отправим расчёт с прогнозируемым сроком и тарифом под вашу задачу.
+        </p>
+        <ul class="form-intro__perks">
+          <li>Расчёт бесплатный, без обязательств</li>
+          <li>Подберём тариф под параметры объекта</li>
+          <li>Покажем похожие закрытые кейсы, если есть</li>
+        </ul>
+      </div>
+
+      <form class="form-card" id="leadForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">Имя</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Максим" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">Телефон</label>
+            <input class="form-input" type="tel" id="phone" name="phone" placeholder="+7 ___ ___ __ __" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email (необязательно)</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="name@company.ru">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="address">Адрес объекта</label>
+          <input class="form-input" type="text" id="address" name="address" placeholder="ул. Ленина, 12" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="area">Площадь, м²</label>
+            <input class="form-input" type="number" id="area" name="area" placeholder="120" required min="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="vacancy">Срок простоя</label>
+            <select class="form-select" id="vacancy" name="vacancy_period" required>
+              <option value="">Выберите срок</option>
+              <option value="less_1">До 1 месяца</option>
+              <option value="1_3">1–3 месяца</option>
+              <option value="3_6">3–6 месяцев</option>
+              <option value="more_6">Более 6 месяцев</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="comment">Комментарий (необязательно)</label>
+          <textarea class="form-textarea" id="comment" name="comment" placeholder="Что уже пробовали, какие сложности"></textarea>
+        </div>
+
+        <label class="form-checkbox">
+          <input type="checkbox" name="privacy_agreement" required>
+          <span>
+            Согласен с <a href="/privacy.html" target="_blank">обработкой персональных данных</a>
+            в соответствии с политикой конфиденциальности
+          </span>
+        </label>
+
+        <button type="submit" class="form-submit" id="submitBtn">
+          Получить расчёт
+        </button>
+
+        <div class="form-note">Ответим в течение 2 часов в рабочее время (09:00–19:00 НСК)</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <div class="logo">meters-nsk<span class="logo__dot">.</span></div>
+        <p class="footer__tagline">
+          AI-outreach для собственников коммерческой недвижимости.
+          Точечные кампании по целевым арендаторам, оплата по результату.
+          Новосибирск → Сибирь → Москва.
+        </p>
+      </div>
+      <div class="footer__col">
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="#how">Как работаем</a></li>
+          <li><a href="#case">Кейс</a></li>
+          <li><a href="#pricing">Тарифы</a></li>
+          <li><a href="#faq">Вопросы</a></li>
+          <li><a href="#form">Получить расчёт</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Контакты</h4>
+        <ul>
+          <li><a href="mailto:maxim@meters-nsk.ru">maxim@meters-nsk.ru</a></li>
+          <li><a href="#">Telegram-канал</a></li>
+          <li><a href="/privacy.html">Политика ПД</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <div>© 2026 meters-nsk. ИП Овчинников М. · ИНН: [заполнить]</div>
+      <div>Новосибирск · meters-nsk.ru</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============ SMOOTH SCROLL (already via CSS, but JS fallback for older browsers) ============
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ============ INTERSECTION OBSERVER FOR REVEAL ANIMATIONS ============
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Auto-trigger on load for above-the-fold reveals
+window.addEventListener('load', () => {
+  document.querySelectorAll('.hero .reveal').forEach(el => {
+    el.classList.add('is-visible');
+  });
+});
+
+// ============ PHONE MASK (simple) ============
+const phoneInput = document.getElementById('phone');
+if (phoneInput) {
+  phoneInput.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.startsWith('8')) val = '7' + val.slice(1);
+    if (!val.startsWith('7') && val.length > 0) val = '7' + val;
+    val = val.slice(0, 11);
+    let formatted = '+7';
+    if (val.length > 1) formatted += ' ' + val.slice(1, 4);
+    if (val.length > 4) formatted += ' ' + val.slice(4, 7);
+    if (val.length > 7) formatted += ' ' + val.slice(7, 9);
+    if (val.length > 9) formatted += ' ' + val.slice(9, 11);
+    e.target.value = formatted;
+  });
+}
+
+// ============ FORM SUBMIT ============
+const TG_TOKEN = '8668520301:AAE2UTM1SZtXoy50ONjYIgle-RvnTM2oc08';
+const TG_CHAT_ID = '776312075'; // Заменить на реальный chat_id
+
+const form = document.getElementById('leadForm');
+const submitBtn = document.getElementById('submitBtn');
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправляем...';
+
+    const data = new FormData(form);
+    const name = data.get('name') || '—';
+    const phone = data.get('phone') || '—';
+    const address = data.get('address') || '—';
+    const area = data.get('area') || '—';
+    const vacancy = data.get('vacancy_period') || '—';
+    const comment = data.get('comment') || '—';
+
+    const text = `🆕 Новая заявка meters-nsk.ru\n\n👤 Имя: ${name}\n📞 Телефон: ${phone}\n📍 Адрес объекта: ${address}\n📐 Площадь: ${area} м²\n⏳ Простой: ${vacancy}\n💬 Комментарий: ${comment}`;
+
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' })
+      });
+      const result = await response.json();
+
+      if (result.ok) {
+        if (typeof ym !== 'undefined') {
+          ym(XXXXXXXX, 'reachGoal', 'form_sent'); // Заменить XXXXXXXX на ID счётчика Метрики
+        }
+        window.location.href = '/thanks.html';
+      } else {
+        alert('Не удалось отправить форму. Напишите напрямую: maxim@meters-nsk.ru');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Получить расчёт';
+      }
+    } catch (err) {
+      alert('Ошибка соединения. Напишите напрямую: maxim@meters-nsk.ru');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Получить расчёт';
+    }
+  });
+}
+</script>
+
+</body>
+</html>
