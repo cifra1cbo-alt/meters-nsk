@@ -88,10 +88,16 @@ ssh -i ~/.ssh/cursor_meters_nsk <SSH_USER>@<SERVER_IP> "whoami && hostname && up
 - После работы:
   - удалите секрет `SSH_PRIVATE_KEY` из Cursor;
   - удалите ключ с сервера (команда ниже);
-  - при необходимости удалите файлы `~/.ssh/cursor_meters_nsk*` на Mac.
+  - удалите файлы ключа с Mac (команда ниже).
 
 ### Удалить временный ключ с сервера
 
 ```bash
 ssh <SSH_USER>@<SERVER_IP> "sed -i '/cursor_meters_nsk/d' ~/.ssh/authorized_keys"
+```
+
+### Удалить временный ключ с Mac
+
+```bash
+rm -f ~/.ssh/cursor_meters_nsk ~/.ssh/cursor_meters_nsk.pub
 ```
