@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="meters-nsk">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="72" y="72" width="4" height="120" fill="#FF5722"/>
+  <text x="96" y="210" fill="#FAFAFA" font-family="system-ui, sans-serif" font-size="72" font-weight="800">meters-nsk</text>
+  <text x="96" y="300" fill="#FF5722" font-family="system-ui, sans-serif" font-size="42" font-weight="700">0?>;=8< 20:0=B=K9 >1J5:B  70 30 4=59</text>
+  <text x="96" y="380" fill="#B8B8B8" font-family="system-ui, sans-serif" font-size="30">AI-outreach 4;O :><<5@G5A:>9 =542868<>AB8 · >2>A818@A:</text>
+  <rect x="96" y="430" width="280" height="72" rx="4" fill="#FF5722"/>
+  <text x="236" y="478" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="28" font-weight="600" text-anchor="middle">meters-nsk.ru</text>
+  <g transform="translate(820 120)" fill="none" stroke="#333" stroke-width="2">
+    <rect x="0" y="80" width="280" height="360" fill="#2B2B2B"/>
+    <rect x="24" y="120" width="56" height="56" fill="#FF5722" opacity="0.8"/>
+    <rect x="96" y="120" width="56" height="56" fill="#444"/>
+    <rect x="168" y="120" width="56" height="56" fill="#444"/>
+    <rect x="200" y="200" width="56" height="56" fill="#FF5722" opacity="0.5"/>
+    <rect x="24" y="200" width="56" height="56" fill="#444"/>
+    <rect x="96" y="200" width="56" height="56" fill="#444"/>
+    <rect x="24" y="280" width="56" height="56" fill="#444"/>
+    <rect x="96" y="280" width="56" height="56" fill="#FF5722" opacity="0.7"/>
+    <rect x="168" y="280" width="56" height="56" fill="#444"/>
+  </g>
+</svg>
