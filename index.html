@@ -13,14 +13,17 @@
 <meta property="og:description" content="AI-outreach для собственников коммерческой недвижимости в Новосибирске. Оплата по результату.">
 <meta property="og:url" content="https://meters-nsk.ru">
 <meta property="og:locale" content="ru_RU">
+<meta property="og:image" content="https://meters-nsk.ru/images/og-image.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://meters-nsk.ru/images/og-image.svg">
 
-<!-- Favicon (placeholder — заменить на настоящий) -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231A1A1A'/%3E%3Ctext x='50' y='62' font-family='sans-serif' font-size='50' font-weight='bold' fill='%23FF5722' text-anchor='middle'%3Em%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts: Bunny Fonts CDN (работает в РФ, в отличие от Google Fonts) -->
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=onest:400,500,600,700|unbounded:500,700,800|jetbrains-mono:400,500&display=swap" rel="stylesheet">
 
 <!-- Яндекс.Метрика — ВСТАВИТЬ КОД СЧЁТЧИКА СЮДА -->
 <!-- <script type="text/javascript">...</script> -->
@@ -143,6 +146,19 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
   padding: clamp(140px, 18vw, 200px) 0 clamp(80px, 10vw, 120px);
   position: relative;
   overflow: hidden;
+}
+.hero__visual {
+  margin-bottom: 48px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--white);
+}
+.hero__visual img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
 .hero__grid {
   display: grid;
@@ -401,6 +417,17 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
   grid-template-columns: 1.3fr 1fr;
   gap: 80px;
   align-items: center;
+}
+.case__photo {
+  margin-bottom: 40px;
+  border: 1px solid #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.case__photo img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 .case__header .eyebrow { margin-bottom: 32px; }
 .case__title {
@@ -936,6 +963,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 <!-- ===== HERO ===== -->
 <section class="hero">
   <div class="container">
+    <div class="hero__visual reveal">
+      <img src="/images/hero-building.svg" alt="Коммерческая недвижимость в Новосибирске" width="640" height="480" loading="eager" decoding="async">
+    </div>
     <div class="hero__grid">
       <div class="hero__left">
         <div class="eyebrow reveal">AI-outreach · Новосибирск</div>
@@ -1088,6 +1118,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
     <div class="case__layout">
       <div class="case__header">
         <div class="eyebrow">Кейс · Новосибирск</div>
+        <div class="case__photo reveal">
+          <img src="/images/case-kievskaya.svg" alt="Коммерческий объект на ул. Киевской, 120 м²" width="560" height="420" loading="lazy" decoding="async">
+        </div>
         <h2 class="case__title">
           Объект на Киевской, <span class="thin">120 м²,</span><br>
           арендатор найден за 21 день
