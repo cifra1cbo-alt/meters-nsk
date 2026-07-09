@@ -1,42 +1,40 @@
 #!/usr/bin/env python3
-"""Create a polished pharmacy + PVZ floor plan PDF from the source sketch."""
+"""Beautify pharmacy/PVZ zones and labels on top of the original floor plan."""
 
 from __future__ import annotations
 
-import math
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
-from reportlab.lib.pagesizes import A4, landscape
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from reportlab.lib.pagesizes import landscape
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
-# Canvas size (landscape A4 at ~200 dpi)
-W, H = 2480, 1754
+SOURCE = Path("/workspace/original_page.png")
+SCALE = 2
 
-# Colors
-BG = (250, 251, 252)
-WALL = (45, 52, 64)
-WALL_FILL = (255, 255, 255)
-PHARMACY_FILL = (198, 232, 196)
-PHARMACY_BORDER = (46, 125, 50)
+PHARMACY = np.array([198, 232, 196], dtype=np.uint8)
+PHARMACY_DEEP = np.array([129, 199, 132], dtype=np.uint8)
+PVZ = np.array([187, 222, 251], dtype=np.uint8)
+PVZ_DEEP = np.array([144, 202, 249], dtype=np.uint8)
+WHITE = np.array([255, 255, 255], dtype=np.uint8)
+
 PHARMACY_ACCENT = (27, 94, 32)
-PVZ_FILL = (187, 222, 251)
-PVZ_BORDER = (21, 101, 192)
 PVZ_ACCENT = (13, 71, 161)
-CORRIDOR_FILL = (227, 242, 253)
 ENTRANCE = (211, 47, 47)
 ENTRANCE_LIGHT = (255, 235, 238)
 TEXT_DARK = (33, 37, 41)
-TEXT_MUTED = (108, 117, 125)
-GRID = (230, 234, 238)
 
 
 def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     paths = [
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-        "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        if bold
+        else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+        if bold
+        else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
     ]
     for path in paths:
         if Path(path).exists():
@@ -44,277 +42,191 @@ def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     return ImageFont.load_default()
 
 
-def rounded_rect(draw, xy, radius, fill, outline=None, width=1):
-    x0, y0, x1, y1 = xy
-    draw.rounded_rectangle(xy, radius=radius, fill=fill, outline=outline, width=width)
+def scale_box(box: tuple[int, int, int, int]) -> tuple[int, int, int, int]:
+    return tuple(v * SCALE for v in box)
 
 
-def draw_door(draw, x, y, orientation: str, size: int = 42):
-    """Draw a door opening marker."""
-    if orientation == "left":
-        draw.arc((x, y, x + size, y + size), 0, 90, fill=ENTRANCE, width=4)
-        draw.line((x, y + size, x, y), fill=ENTRANCE, width=4)
-    elif orientation == "right":
-        draw.arc((x - size, y, x, y + size), 90, 180, fill=ENTRANCE, width=4)
-        draw.line((x, y + size, x, y), fill=ENTRANCE, width=4)
-    elif orientation == "bottom":
-        draw.arc((x, y - size, x + size, y), 270, 360, fill=ENTRANCE, width=4)
-        draw.line((x, y, x + size, y), fill=ENTRANCE, width=4)
+def classify_pixels(arr: np.ndarray):
+    r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
+    black = (r < 70) & (g < 70) & (b < 70)
+    green_fill = (g > 150) & (r < 120) & (b < 120) & ~black
+    blue_fill = (
+        (b > 180)
+        & (g > 150)
+        & (r > 100)
+        & (r < 200)
+        & ~black
+        & ~green_fill
+    )
+    return black, green_fill, blue_fill
 
 
-def draw_entrance_label(
-    draw,
-    text: str,
-    anchor: tuple[int, int],
-    direction: str,
-    font_title,
-    font_sub,
-):
-    x, y = anchor
-    pad_x, pad_y = 28, 18
-    title = text
-    sub = "Вход"
+def fill_box(result: np.ndarray, box: tuple[int, int, int, int], color: np.ndarray):
+    x0, y0, x1, y1 = box
+    result[y0:y1, x0:x1] = color
 
-    bbox_t = draw.textbbox((0, 0), title, font=font_title)
-    bbox_s = draw.textbbox((0, 0), sub, font=font_sub)
-    tw = max(bbox_t[2] - bbox_t[0], bbox_s[2] - bbox_s[0])
-    th = (bbox_t[3] - bbox_t[1]) + (bbox_s[3] - bbox_s[1]) + 8
-    box_w = tw + pad_x * 2 + 56
-    box_h = th + pad_y * 2
 
-    if direction == "left":
-        bx0, by0 = x - box_w, y - box_h // 2
-        bx1, by1 = x, y + box_h // 2
-        arrow_tip = (bx1 + 36, y)
-        arrow_base = (bx1 + 8, y)
-    elif direction == "right":
-        bx0, by0 = x, y - box_h // 2
-        bx1, by1 = min(x + box_w, W - 30), y + box_h // 2
-        arrow_tip = (bx0 - 36, y)
-        arrow_base = (bx0 - 8, y)
-    else:
-        bx0, by0 = x - box_w // 2, y
-        bx1, by1 = x + box_w // 2, y + box_h
-        arrow_tip = (x, y - 8)
-        arrow_base = (x, y + 8)
+def apply_zone_gradient(result: np.ndarray, mask: np.ndarray, base: np.ndarray, deep: np.ndarray):
+    ys, xs = np.where(mask)
+    if len(xs) == 0:
+        return
+    y0, y1 = ys.min(), ys.max()
+    x0, x1 = xs.min(), xs.max()
+    height = max(y1 - y0, 1)
+    width = max(x1 - x0, 1)
+    for y in range(y0, y1 + 1):
+        row_mask = mask[y]
+        if not row_mask.any():
+            continue
+        ty = (y - y0) / height
+        for x in range(x0, x1 + 1):
+            if not mask[y, x]:
+                continue
+            tx = (x - x0) / width
+            blend = 0.18 * ty + 0.10 * tx
+            color = base * (1 - blend) + deep * blend
+            result[y, x] = color.astype(np.uint8)
 
-    rounded_rect(draw, (bx0, by0, bx1, by1), 18, ENTRANCE_LIGHT, ENTRANCE, 3)
 
-    icon_cx = bx0 + 34
-    icon_cy = (by0 + by1) // 2
-    draw.rounded_rectangle((icon_cx - 16, icon_cy - 20, icon_cx + 16, icon_cy + 20), 6, fill=ENTRANCE)
-    draw.ellipse((icon_cx - 4, icon_cy - 4, icon_cx + 4, icon_cy + 4), fill=(255, 255, 255))
-
-    tx = bx0 + 64
-    ty = by0 + pad_y - 2
-    draw.text((tx, ty), sub, fill=ENTRANCE, font=font_sub)
-    draw.text((tx, ty + 26), title, fill=TEXT_DARK, font=font_title)
-
-    draw.line((arrow_base[0], arrow_base[1], arrow_tip[0], arrow_tip[1]), fill=ENTRANCE, width=5)
-    if direction == "left":
-        draw.polygon(
-            [(arrow_tip[0], arrow_tip[1]), (arrow_tip[0] - 18, arrow_tip[1] - 10), (arrow_tip[0] - 18, arrow_tip[1] + 10)],
-            fill=ENTRANCE,
-        )
-    elif direction == "right":
-        draw.polygon(
-            [(arrow_tip[0], arrow_tip[1]), (arrow_tip[0] + 18, arrow_tip[1] - 10), (arrow_tip[0] + 18, arrow_tip[1] + 10)],
-            fill=ENTRANCE,
+def beautify_original(source: Path) -> Image.Image:
+    original = Image.open(source).convert("RGB")
+    if SCALE != 1:
+        original = original.resize(
+            (original.width * SCALE, original.height * SCALE),
+            Image.Resampling.LANCZOS,
         )
 
+    arr = np.array(original)
+    result = arr.copy()
+    black, green_fill, blue_fill = classify_pixels(arr)
 
-def draw_zone_badge(draw, x, y, title, subtitle, fill, accent, font_big, font_small):
-    pad = 24
-    bbox_t = draw.textbbox((0, 0), title, font=font_big)
-    bbox_s = draw.textbbox((0, 0), subtitle, font=font_small)
-    tw = max(bbox_t[2] - bbox_t[0], bbox_s[2] - bbox_s[0])
-    th = (bbox_t[3] - bbox_t[1]) + (bbox_s[3] - bbox_s[1]) + 10
-    bw, bh = tw + pad * 2, th + pad * 2
-    rounded_rect(draw, (x - bw // 2, y - bh // 2, x + bw // 2, y + bh // 2), 16, (255, 255, 255, 230), accent, 2)
-    draw.text((x - tw // 2, y - th // 2 - 2), title, fill=accent, font=font_big)
-    draw.text((x - (bbox_s[2] - bbox_s[0]) // 2, y - th // 2 + 38), subtitle, fill=TEXT_MUTED, font=font_small)
+    # Replace only zone fills; walls and geometry stay from the source image.
+    result[green_fill] = PHARMACY
+    result[blue_fill] = PVZ
+    apply_zone_gradient(result, green_fill, PHARMACY, PHARMACY_DEEP)
+    apply_zone_gradient(result, blue_fill, PVZ, PVZ_DEEP)
 
+    # Remove old handwritten labels and arrows, then restore walls outside those areas.
+    text_mask = np.zeros(arr.shape[:2], dtype=bool)
+    clear_regions = [
+        scale_box((0, 100, 240, 960)),       # left entrance text + arrow
+        scale_box((380, 380, 860, 490)),     # old "Аптека"
+        scale_box((1030, 390, 1220, 470)),   # old "ПВЗ"
+        scale_box((1270, 160, 1666, 730)),   # right entrance text + arrow
+    ]
+    for box in clear_regions:
+        x0, y0, x1, y1 = box
+        text_mask[y0:y1, x0:x1] = True
 
-def create_floor_plan() -> Image.Image:
-    img = Image.new("RGB", (W, H), BG)
+    green_box = scale_box((210, 231, 902, 561))
+    blue_box = scale_box((933, 230, 1246, 972))
+
+    def paint_clear_region(box, color):
+        x0, y0, x1, y1 = box
+        region = text_mask[y0:y1, x0:x1].copy()
+        result[y0:y1, x0:x1][region] = color
+
+    paint_clear_region(green_box, PHARMACY)
+    paint_clear_region(blue_box, PVZ)
+    fill_box(result, scale_box((0, 100, 240, 960)), WHITE)
+    fill_box(result, scale_box((1270, 160, 1666, 730)), WHITE)
+
+    wall_mask = black & ~text_mask
+    result[wall_mask] = arr[wall_mask]
+
+    img = Image.fromarray(result)
     draw = ImageDraw.Draw(img)
 
-    font_title = load_font(52, bold=True)
-    font_h1 = load_font(44, bold=True)
-    font_h2 = load_font(34, bold=True)
-    font_body = load_font(28)
-    font_small = load_font(24)
-    font_zone = load_font(56, bold=True)
-    font_zone_sub = load_font(26)
+    font_zone = load_font(34 * SCALE, bold=True)
+    font_ent_title = load_font(22 * SCALE, bold=True)
+    font_ent_sub = load_font(16 * SCALE)
 
-    # Header
-    draw.text((120, 70), "Планировка коммерческого помещения", fill=TEXT_DARK, font=font_title)
-    draw.text((120, 130), "Аптека и пункт выдачи заказов (ПВЗ)", fill=TEXT_MUTED, font=font_body)
-    draw.line((120, 185, W - 120, 185), fill=GRID, width=2)
+    def zone_badge(center, title, accent, fill):
+        cx, cy = center
+        pad_x, pad_y = 18 * SCALE, 10 * SCALE
+        bbox = draw.textbbox((0, 0), title, font=font_zone)
+        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        box = (
+            cx - tw // 2 - pad_x,
+            cy - th // 2 - pad_y,
+            cx + tw // 2 + pad_x,
+            cy + th // 2 + pad_y,
+        )
+        draw.rounded_rectangle(box, radius=14 * SCALE, fill=(255, 255, 255), outline=accent, width=3 * SCALE)
+        draw.text((cx, cy), title, fill=accent, font=font_zone, anchor="mm")
 
-    # Plan origin and scale (based on source sketch proportions)
-    ox, oy = 460, 320
-    scale = 1.45
-    wall = 14
+    zone_badge((560 * SCALE, 395 * SCALE), "АПТЕКА", PHARMACY_ACCENT, PHARMACY)
+    zone_badge((1080 * SCALE, 360 * SCALE), "ПВЗ", PVZ_ACCENT, PVZ)
 
-    def sx(v):
-        return ox + v * scale
+    def entrance_label(text, anchor, direction):
+        x, y = anchor
+        pad_x, pad_y = 16 * SCALE, 12 * SCALE
+        sub = "Вход"
+        bbox_t = draw.textbbox((0, 0), text, font=font_ent_title)
+        bbox_s = draw.textbbox((0, 0), sub, font=font_ent_sub)
+        tw = max(bbox_t[2] - bbox_t[0], bbox_s[2] - bbox_s[0])
+        th = (bbox_t[3] - bbox_t[1]) + (bbox_s[3] - bbox_s[1]) + 6 * SCALE
+        bw = tw + pad_x * 2 + 42 * SCALE
+        bh = th + pad_y * 2
 
-    def sy(v):
-        return oy + v * scale
+        if direction == "left":
+            bx0, by0, bx1, by1 = x - bw, y - bh // 2, x, y + bh // 2
+            tip = (bx1 + 28 * SCALE, y)
+            base = (bx1 + 6 * SCALE, y)
+            arrow = [(tip[0], tip[1]), (tip[0] - 14 * SCALE, tip[1] - 8 * SCALE), (tip[0] - 14 * SCALE, tip[1] + 8 * SCALE)]
+        else:
+            bx0, by0, bx1, by1 = x, y - bh // 2, x + bw, y + bh // 2
+            tip = (bx0 - 28 * SCALE, y)
+            base = (bx0 - 6 * SCALE, y)
+            arrow = [(tip[0], tip[1]), (tip[0] + 14 * SCALE, tip[1] - 8 * SCALE), (tip[0] + 14 * SCALE, tip[1] + 8 * SCALE)]
 
-    # Room geometry traced from source image (relative units)
-    outer = (36, 228, 1295, 632)
-    apt_left = (210, 231, 554, 561)
-    apt_right = (557, 231, 902, 561)
-    pvz_main = (905, 228, 1098, 561)
-    pvz_lower = (905, 561, 1098, 632)
-    corridor = (1248, 228, 1295, 632)
+        draw.rounded_rectangle(
+            (bx0, by0, bx1, by1),
+            radius=14 * SCALE,
+            fill=ENTRANCE_LIGHT,
+            outline=ENTRANCE,
+            width=3 * SCALE,
+        )
+        icon_cx = bx0 + 24 * SCALE
+        icon_cy = (by0 + by1) // 2
+        draw.rounded_rectangle(
+            (icon_cx - 12 * SCALE, icon_cy - 14 * SCALE, icon_cx + 12 * SCALE, icon_cy + 14 * SCALE),
+            5 * SCALE,
+            fill=ENTRANCE,
+        )
+        draw.ellipse(
+            (icon_cx - 3 * SCALE, icon_cy - 3 * SCALE, icon_cx + 3 * SCALE, icon_cy + 3 * SCALE),
+            fill=(255, 255, 255),
+        )
+        tx = bx0 + 46 * SCALE
+        ty = by0 + pad_y - 2 * SCALE
+        draw.text((tx, ty), sub, fill=ENTRANCE, font=font_ent_sub)
+        draw.text((tx, ty + 20 * SCALE), text, fill=TEXT_DARK, font=font_ent_title)
+        draw.line((base[0], base[1], tip[0], tip[1]), fill=ENTRANCE, width=4 * SCALE)
+        draw.polygon(arrow, fill=ENTRANCE)
 
-    def rect_rel(r):
-        return (sx(r[0]), sy(r[1]), sx(r[2]), sy(r[3]))
+    entrance_label("с улицы Киевская", (340 * SCALE, 420 * SCALE), "left")
+    entrance_label("со двора", (1360 * SCALE, 420 * SCALE), "right")
 
-    # Subtle floor background
-    plan_box = rect_rel(outer)
-    rounded_rect(draw, (plan_box[0] - 30, plan_box[1] - 30, plan_box[2] + 30, plan_box[3] + 30), 24, (255, 255, 255), GRID, 2)
-
-    # Zone fills
-    for r, fill in [
-        (apt_left, PHARMACY_FILL),
-        (apt_right, PHARMACY_FILL),
-        (pvz_main, PVZ_FILL),
-        (pvz_lower, PVZ_FILL),
-        (corridor, CORRIDOR_FILL),
-    ]:
-        x0, y0, x1, y1 = rect_rel(r)
-        draw.rectangle((x0 + wall // 2, y0 + wall // 2, x1 - wall // 2, y1 - wall // 2), fill=fill)
-
-    # Internal connection between pvz main and corridor (opening area)
-    conn = rect_rel((1098, 228, 1248, 561))
-    draw.rectangle((conn[0] + wall // 2, conn[1] + wall // 2, conn[2] - wall // 2, conn[3] - wall // 2), fill=PVZ_FILL)
-
-    # Walls
-    def wall_rect(r):
-        x0, y0, x1, y1 = rect_rel(r)
-        draw.rectangle((x0, y0, x1, y1), fill=WALL_FILL, outline=WALL, width=wall)
-
-    # Outer walls
-    x0, y0, x1, y1 = rect_rel(outer)
-    draw.rectangle((x0, y0, x1, y1), outline=WALL, width=wall)
-
-    # Internal walls - draw as thick lines
-    dividers = [
-        ((554, 231), (554, 561)),  # pharmacy split
-        ((902, 231), (902, 561)),  # pharmacy / pvz
-        ((1098, 231), (1098, 561)),  # pvz internal
-        ((1248, 231), (1248, 632)),  # corridor split
-        ((905, 561), (1098, 561)),  # horizontal lower pvz
-    ]
-    for (x_a, y_a), (x_b, y_b) in dividers:
-        draw.line((sx(x_a), sy(y_a), sx(x_b), sy(y_b)), fill=WALL, width=wall)
-
-    # Door openings (clear wall segments)
-    doors = [
-        ((36, 380), (36, 460), "left"),  # Kievskaya entrance
-        ((1295, 380), (1295, 460), "right"),  # yard entrance
-        ((1098, 480), (1248, 480), "internal"),  # connection to corridor
-    ]
-    for d in doors:
-        if d[2] == "left":
-            dx0, dy0, dy1 = sx(d[0][0]), sy(d[0][1]), sy(d[1][1])
-            draw.rectangle((dx0 - 2, dy0, dx0 + wall + 8, dy1), fill=PHARMACY_FILL)
-            draw_door(draw, dx0 + 8, dy0 + 10, "left", 46)
-        elif d[2] == "right":
-            dx0, dy0, dy1 = sx(d[0][0]), sy(d[0][1]), sy(d[1][1])
-            draw.rectangle((dx0 - wall - 8, dy0, dx0 + 2, dy1), fill=CORRIDOR_FILL)
-            draw_door(draw, dx0 - 8, dy0 + 10, "right", 46)
-
-    # Zone labels
-    al = rect_rel(apt_left)
-    ar = rect_rel(apt_right)
-    pm = rect_rel(pvz_main)
-    cr = rect_rel(corridor)
-
-    draw_zone_badge(draw, (al[0] + al[2]) // 2, (al[1] + al[3]) // 2, "АПТЕКА", "торговый зал", PHARMACY_FILL, PHARMACY_ACCENT, font_zone, font_zone_sub)
-    draw_zone_badge(draw, (ar[0] + ar[2]) // 2, (ar[1] + ar[3]) // 2, "АПТЕКА", "рабочая зона", PHARMACY_FILL, PHARMACY_ACCENT, font_zone, font_zone_sub)
-    draw_zone_badge(draw, (pm[0] + pm[2]) // 2, (pm[1] + pm[3]) // 2, "ПВЗ", "пункт выдачи", PVZ_FILL, PVZ_ACCENT, font_zone, font_zone_sub)
-    draw.text(((cr[0] + cr[2]) // 2, (cr[1] + cr[3]) // 2), "Коридор", fill=PVZ_ACCENT, font=font_h2, anchor="mm")
-
-    # Entrance labels
-    draw_entrance_label(
-        draw,
-        "с улицы Киевская",
-        (sx(36) - 40, sy(420)),
-        "left",
-        font_h2,
-        font_small,
-    )
-    draw_entrance_label(
-        draw,
-        "со двора",
-        (sx(1295) + 40, sy(420)),
-        "right",
-        font_h2,
-        font_small,
-    )
-
-    # Legend
-    lx, ly = 120, H - 250
-    draw.text((lx, ly - 50), "Обозначения", fill=TEXT_DARK, font=font_h2)
-    legend_items = [
-        (PHARMACY_FILL, PHARMACY_ACCENT, "Аптека"),
-        (PVZ_FILL, PVZ_BORDER, "ПВЗ"),
-        (CORRIDOR_FILL, PVZ_BORDER, "Коридор / проход"),
-        (ENTRANCE_LIGHT, ENTRANCE, "Вход"),
-    ]
-    for i, (fill, border, label) in enumerate(legend_items):
-        yy = ly + i * 48
-        rounded_rect(draw, (lx, yy, lx + 44, yy + 30), 6, fill, border, 2)
-        draw.text((lx + 62, yy + 2), label, fill=TEXT_DARK, font=font_body)
-
-    # Footer note
-    draw.text((120, H - 70), "Схема составлена на основании исходного эскиза от 09.07.2026", fill=TEXT_MUTED, font=font_small)
-    draw.text((W - 120, H - 70), "Масштаб условный", fill=TEXT_MUTED, font=font_small, anchor="rb")
-
-    # Decorative compass
-    cx, cy, r = W - 180, 260, 52
-    draw.ellipse((cx - r, cy - r, cx + r, cy + r), outline=GRID, width=2)
-    draw.line((cx, cy - r + 8, cx, cy + r - 8), fill=TEXT_MUTED, width=2)
-    draw.polygon([(cx, cy - r + 8), (cx - 10, cy - r + 28), (cx + 10, cy - r + 28)], fill=ENTRANCE)
-    draw.text((cx, cy - r - 18), "С", fill=TEXT_DARK, font=font_small, anchor="mm")
-
-    return img
+    return img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=70, threshold=2))
 
 
 def save_pdf(image: Image.Image, output_path: Path) -> None:
-    page_w, page_h = landscape(A4)
-    c = canvas.Canvas(str(output_path), pagesize=landscape(A4))
+    page_w = image.width * 72 / 200
+    page_h = image.height * 72 / 200
+    c = canvas.Canvas(str(output_path), pagesize=(page_w, page_h))
     c.setTitle("Планировка — Аптека и ПВЗ")
 
     tmp_png = output_path.with_suffix(".png")
     image.save(tmp_png, "PNG", dpi=(200, 200))
-
-    margin = 18
-    avail_w = page_w - 2 * margin
-    avail_h = page_h - 2 * margin
-    img_ratio = image.width / image.height
-    page_ratio = avail_w / avail_h
-    if img_ratio > page_ratio:
-        draw_w = avail_w
-        draw_h = avail_w / img_ratio
-    else:
-        draw_h = avail_h
-        draw_w = avail_h * img_ratio
-    x = (page_w - draw_w) / 2
-    y = (page_h - draw_h) / 2
-    c.drawImage(ImageReader(str(tmp_png)), x, y, width=draw_w, height=draw_h)
+    c.drawImage(ImageReader(str(tmp_png)), 0, 0, width=page_w, height=page_h)
     c.showPage()
     c.save()
 
 
 def main():
     output_pdf = Path("/workspace/Планировка_аптека_ПВЗ.pdf")
-    img = create_floor_plan()
+    img = beautify_original(SOURCE)
     img.save("/workspace/Планировка_аптека_ПВЗ.png", "PNG")
     save_pdf(img, output_pdf)
     print(f"Saved: {output_pdf}")
