@@ -1,0 +1,22 @@
+meters-nsk — гибрид: Mac + Cloud Agent
+======================================
+
+Режим A — Remote Control (без Secrets)
+--------------------------------------
+• Cursor Settings → Agents → Remote Control = ON
+• Keep This Computer Awake = ON
+• Ключ на Mac: ~/.ssh/cursor_meters_nsk
+• Публичный ключ уже на сервере
+• Работает с телефона, пока Mac включён
+
+Режим B — Cloud Agent (Mac можно выключить)
+-------------------------------------------
+• Нужен Secrets: SSH_PRIVATE_KEY
+• Dashboard → Update Existing Env
+• В репо: .cursor/environment.json + setup-ssh.sh
+• Без Secrets облачная сессия снова потеряет ключ
+
+Итого
+-----
+Хотите иногда облако → один раз настройте Secrets для режима B.
+Пока Mac рядом → пользуйтесь Remote Control (режим A).

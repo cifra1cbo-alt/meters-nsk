@@ -1,0 +1,3 @@
+{
+  "install": "bash .cursor/scripts/setup-ssh.sh"
+}
