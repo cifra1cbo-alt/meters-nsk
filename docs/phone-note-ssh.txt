@@ -1,83 +1,22 @@
-meters-nsk — постоянный доступ агента к серверу
-================================================
+meters-nsk — гибрид: Mac + Cloud Agent
+======================================
 
-Заполните:
-  SSH_USER = ваш пользователь
-  SERVER_IP = IP сервера
+Режим A — Remote Control (без Secrets)
+--------------------------------------
+• Cursor Settings → Agents → Remote Control = ON
+• Keep This Computer Awake = ON
+• Ключ на Mac: ~/.ssh/cursor_meters_nsk
+• Публичный ключ уже на сервере
+• Работает с телефона, пока Mac включён
 
-────────────────────────────────────
-1. Ключ на Mac (один раз)
-────────────────────────────────────
+Режим B — Cloud Agent (Mac можно выключить)
+-------------------------------------------
+• Нужен Secrets: SSH_PRIVATE_KEY
+• Dashboard → Update Existing Env
+• В репо: .cursor/environment.json + setup-ssh.sh
+• Без Secrets облачная сессия снова потеряет ключ
 
-ssh-keygen -t ed25519 -f ~/.ssh/cursor_meters_nsk -C "cursor_meters_nsk" -N ""
-
-────────────────────────────────────
-2. Публичный ключ на сервер (один раз)
-────────────────────────────────────
-
-ssh-copy-id -i ~/.ssh/cursor_meters_nsk.pub SSH_USER@SERVER_IP
-
-Проверка:
-ssh SSH_USER@SERVER_IP "grep cursor_meters_nsk ~/.ssh/authorized_keys"
-
-────────────────────────────────────
-3. Секрет в Cursor (постоянно)
-────────────────────────────────────
-
-cat ~/.ssh/cursor_meters_nsk | pbcopy
-
-Cursor → Settings → Secrets
-  или  https://cursor.com/dashboard/cloud-agents → Secrets
-
-Имя:     SSH_PRIVATE_KEY
-Тип:     Runtime Secret
-Значение: вставить из буфера → Сохранить
-
-НЕ вставляйте ключ в чат.
-
-────────────────────────────────────
-4. Update Env (обязательно)
-────────────────────────────────────
-
-https://cursor.com/dashboard/cloud-agents
-→ Start Setup Agent → Update Existing Env
-(или Start Fresh, если окружения нет)
-
-В репо уже есть:
-  .cursor/environment.json
-  .cursor/scripts/setup-ssh.sh
-
-────────────────────────────────────
-5. Написать агенту
-────────────────────────────────────
-
-готово
-
-────────────────────────────────────
-Почему раньше «вылетало»
-────────────────────────────────────
-
-• Ключ только на диске временной VM
-• Новая сессия = новый пустой ~/.ssh
-• Без Secrets ключ не подставляется
-
-────────────────────────────────────
-Ротация / удаление
-────────────────────────────────────
-
-Сервер:
-ssh SSH_USER@SERVER_IP "sed -i '/cursor_meters_nsk/d' ~/.ssh/authorized_keys"
-
-Mac:
-rm -f ~/.ssh/cursor_meters_nsk ~/.ssh/cursor_meters_nsk.pub
-
-Cursor:
-удалить секрет SSH_PRIVATE_KEY → Update Env
-
-────────────────────────────────────
-Важно
-────────────────────────────────────
-
-• Только временный cursor_meters_nsk, не id_ed25519
-• IP и пароли в git не коммитить
-• Secrets + Update Env = доступ на постоянной основе
+Итого
+-----
+Хотите иногда облако → один раз настройте Secrets для режима B.
+Пока Mac рядом → пользуйтесь Remote Control (режим A).

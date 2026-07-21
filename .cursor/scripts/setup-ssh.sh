@@ -1,28 +1,33 @@
 #!/usr/bin/env bash
-# Writes SSH_PRIVATE_KEY (Cursor Runtime Secret) into ~/.ssh for Cloud Agent sessions.
-# Idempotent: safe to run on every agent boot.
+# SSH key bootstrap for Cloud Agent.
+# Modes (in order):
+#   1) SSH_PRIVATE_KEY env/secret present → write ~/.ssh/cursor_meters_nsk
+#   2) Key already on disk (saved environment snapshot) → keep it
+#   3) Otherwise → skip (use Remote Control / Mac host agent instead)
 set -euo pipefail
 
 KEY_PATH="${HOME}/.ssh/cursor_meters_nsk"
 MARKER="# cursor_meters_nsk cloud-agent"
 
-if [[ -z "${SSH_PRIVATE_KEY:-}" ]]; then
-  echo "setup-ssh: SSH_PRIVATE_KEY secret not set — skipping SSH key install"
-  exit 0
-fi
-
 mkdir -p "${HOME}/.ssh"
 chmod 700 "${HOME}/.ssh"
 
-# Normalize newlines / strip accidental CR from mobile paste
-printf '%s\n' "${SSH_PRIVATE_KEY}" | tr -d '\r' > "${KEY_PATH}"
-chmod 600 "${KEY_PATH}"
+if [[ -n "${SSH_PRIVATE_KEY:-}" ]]; then
+  printf '%s\n' "${SSH_PRIVATE_KEY}" | tr -d '\r' > "${KEY_PATH}"
+  chmod 600 "${KEY_PATH}"
+  echo "setup-ssh: installed key from SSH_PRIVATE_KEY"
+elif [[ -f "${KEY_PATH}" ]]; then
+  chmod 600 "${KEY_PATH}"
+  echo "setup-ssh: reusing existing ${KEY_PATH} (snapshot/local)"
+else
+  echo "setup-ssh: no key — skip (Remote Control on Mac or add key before Update Env)"
+  exit 0
+fi
 
-# Prefer dedicated key name; also expose as default identity for plain `ssh user@host`
+# Default identity for plain `ssh user@host`
 ln -sfn "${KEY_PATH}" "${HOME}/.ssh/id_ed25519"
 chmod 600 "${HOME}/.ssh/id_ed25519" 2>/dev/null || true
 
-# Minimal SSH client defaults (no host secrets in repo)
 if [[ ! -f "${HOME}/.ssh/config" ]] || ! grep -q "IdentityFile ${KEY_PATH}" "${HOME}/.ssh/config" 2>/dev/null; then
   cat >> "${HOME}/.ssh/config" <<EOF
 ${MARKER}
@@ -34,7 +39,6 @@ EOF
   chmod 600 "${HOME}/.ssh/config"
 fi
 
-# Optional: load into agent if available
 if command -v ssh-add >/dev/null 2>&1; then
   if [[ -z "${SSH_AUTH_SOCK:-}" ]] || [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
     eval "$(ssh-agent -s)" >/dev/null
@@ -42,4 +46,4 @@ if command -v ssh-add >/dev/null 2>&1; then
   ssh-add "${KEY_PATH}" 2>/dev/null || true
 fi
 
-echo "setup-ssh: installed ${KEY_PATH}"
+echo "setup-ssh: ready ${KEY_PATH}"

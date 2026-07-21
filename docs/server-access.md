@@ -1,137 +1,71 @@
 # Подключение к серверу
 
-Инструкция по SSH-доступу для работы с сервером и деплоем сайта **meters-nsk.ru**.
+Инструкция по SSH-доступу для **meters-nsk.ru** и сервера Max.
 
-> **Важно:** реальные IP, имена серверов, пользователи и ключи **не храните в git**.
-> Заполните значения локально или в Secrets Cursor.
+> IP, пароли и приватные ключи **не коммитьте** в git.
 
-## Параметры (локально, не в репозитории)
+## Два режима работы агента
 
-| Параметр | Значение |
-|---|---|
-| Хост | `<SERVER_IP>` |
-| Пользователь SSH | `<SSH_USER>` |
-| Провайдер / регион | `<описание>` |
-| ОС | Ubuntu 24.04 (пример) |
+| Режим | Где крутится агент | Ключ SSH | Когда удобно |
+|---|---|---|---|
+| **A. Remote Control** | На вашем Mac | Уже в `~/.ssh/cursor_meters_nsk` | Телефон управляет Mac, Mac включён |
+| **B. Cloud Agent** | Облачная VM Cursor | Нужен секрет или snapshot | Mac выключен, работа только из облака |
 
-Root-пароль панели хостинга — только в менеджере паролей, **не коммитьте**.
-
-## Подключение с вашей машины
-
-```bash
-ssh <SSH_USER>@<SERVER_IP>
-```
-
-Вход по SSH-ключу.
+Можно пользоваться **обоими**: с телефона через Mac (A) или чистым облаком (B).
 
 ---
 
-## Постоянный доступ для Cloud Agent (Cursor)
+## Режим A — без Secrets (Remote Control)
 
-Cloud Agent каждый раз стартует в **новой** VM. Файл ключа на диске VM **не сохраняется**.
-Постоянный доступ = **Secrets + install-скрипт + публичный ключ на сервере**.
-
-В этом репозитории уже есть:
-
-- `.cursor/environment.json` — при старте вызывает setup
-- `.cursor/scripts/setup-ssh.sh` — кладёт ключ из секрета в `~/.ssh/cursor_meters_nsk`
-
-### Шаг 1 — создать отдельный ключ (один раз на Mac)
-
-Не используйте основной ключ Mac (`id_ed25519`). Только отдельный:
-
-```bash
-ssh-keygen -t ed25519 -f ~/.ssh/cursor_meters_nsk -C "cursor_meters_nsk" -N ""
-```
-
-### Шаг 2 — добавить публичный ключ на сервер (один раз)
-
-```bash
-ssh-copy-id -i ~/.ssh/cursor_meters_nsk.pub <SSH_USER>@<SERVER_IP>
-```
-
-Или вручную:
-
-```bash
-cat ~/.ssh/cursor_meters_nsk.pub | ssh <SSH_USER>@<SERVER_IP> \
-  'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
-```
-
-Проверка:
-
-```bash
-ssh <SSH_USER>@<SERVER_IP> "grep cursor_meters_nsk ~/.ssh/authorized_keys"
-```
-
-### Шаг 3 — секрет в Cursor (постоянно)
-
-1. Скопируйте приватный ключ:
+1. На Mac есть ключ: `~/.ssh/cursor_meters_nsk`
+2. Публичный ключ на сервере (один раз):
    ```bash
-   cat ~/.ssh/cursor_meters_nsk | pbcopy
+   ssh-copy-id -i ~/.ssh/cursor_meters_nsk.pub <SSH_USER>@<SERVER_IP>
    ```
-2. Откройте [Cloud Agents → Secrets](https://cursor.com/dashboard/cloud-agents)  
-   (или Cursor → **Settings → Secrets**).
-3. Создайте секрет:
-   - **Имя:** `SSH_PRIVATE_KEY`
-   - **Тип:** Runtime Secret
-   - **Значение:** весь файл (`-----BEGIN` … `-----END`)
-4. **Не** вставляйте ключ в чат с агентом.
+3. Cursor → **Settings → Agents**:
+   - **Remote Control** → **ON**
+   - **Keep This Computer Awake** → **ON** (Mac от розетки)
+4. С телефона/web открывайте агента — он идёт через Mac, SSH на сервер стабилен.
 
-### Шаг 4 — обновить окружение агента (обязательно)
+Минус: Mac должен быть включён.
 
-После добавления/смены секрета:
+---
 
-1. [cursor.com/dashboard/cloud-agents](https://cursor.com/dashboard/cloud-agents)
-2. Ваше окружение / агент → **Start Setup Agent** → **Update Existing Env**  
-   (или **Start Fresh**, если окружения ещё нет)
-3. Дождитесь успешного install (`setup-ssh.sh`)
-4. Напишите агенту **«готово»**
+## Режим B — Cloud Agent (Mac может быть выключен)
 
-Без Update Env новая сессия может стартовать без секрета.
+Облачная VM **каждый раз новая**. Ключ с диска прошлой сессии не переносится сам.
 
-### Шаг 5 — проверка
+### Постоянный вариант для облака (рекомендуется)
 
-Агент должен успешно выполнить:
+1. Cursor Secrets → `SSH_PRIVATE_KEY` = содержимое `~/.ssh/cursor_meters_nsk`
+2. В репо уже есть:
+   - `.cursor/environment.json`
+   - `.cursor/scripts/setup-ssh.sh` — при старте кладёт ключ в `~/.ssh/`
+3. [Cloud Agents dashboard](https://cursor.com/dashboard/cloud-agents) → **Update Existing Env**
+4. Написать агенту «готово» и проверить SSH
+
+Без Secrets у Cloud Agent доступ снова «выпадет» после новой сессии.
+
+### Если Secrets недоступны (браузер не грузит)
+
+Временный обход: вставить ключ в чат → агент положит в `~/.ssh` **только на эту сессию**.  
+Для постоянства потом всё равно нужны Secrets + Update Env.
+
+---
+
+## Проверка
 
 ```bash
 ssh -i ~/.ssh/cursor_meters_nsk <SSH_USER>@<SERVER_IP> "whoami && hostname && uptime"
 ```
 
-или просто:
-
-```bash
-ssh <SSH_USER>@<SERVER_IP> "whoami"
-```
-
----
-
-## Почему доступ «выпадал»
-
-| Причина | Что происходит |
-|---|---|
-| Ключ только на диске старой VM | Новая сессия = пустой `~/.ssh/` |
-| Ключ вставлен в чат | Работает один раз, не постоянно |
-| Нет секрета `SSH_PRIVATE_KEY` | Скрипт setup-ssh пропускает установку |
-| Секрет добавлен, но Env не обновлён | Старая сборка без секрета |
-
----
-
-## Текущее состояние проекта
-
-| Что | Статус |
-|---|---|
-| Репозиторий | Статический сайт + Cloud Agent SSH setup |
-| `.cursor/environment.json` | install → `setup-ssh.sh` |
-| Домен `meters-nsk.ru` | Проверьте DNS и хостинг отдельно |
-
 ---
 
 ## Безопасность
 
-- Не коммитьте IP, пароли, приватные и публичные ключи.
-- Не передавайте агенту **личный** SSH-ключ с Mac — только `cursor_meters_nsk`.
-- Runtime Secret не должен светиться в чате; всё равно не вставляйте ключ в сообщения.
-- Если ключ скомпрометирован — удалите строку с сервера и перевыпустите ключ.
+- Отдельный ключ `cursor_meters_nsk`, не основной `id_ed25519`
+- Не коммитьте приватный ключ
+- Если ключ светился в чате — перевыпустите и обновите `authorized_keys` + Secrets
 
 ### Удалить ключ с сервера
 
@@ -144,7 +78,3 @@ ssh <SSH_USER>@<SERVER_IP> "sed -i '/cursor_meters_nsk/d' ~/.ssh/authorized_keys
 ```bash
 rm -f ~/.ssh/cursor_meters_nsk ~/.ssh/cursor_meters_nsk.pub
 ```
-
-### Удалить секрет в Cursor
-
-Settings / Cloud Agents → Secrets → удалить `SSH_PRIVATE_KEY` → Update Env.
