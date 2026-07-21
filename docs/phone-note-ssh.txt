@@ -1,34 +1,51 @@
-meters-nsk — доступ агента к серверу
-=====================================
+meters-nsk — постоянный доступ агента к серверу
+================================================
 
-Заполните перед началом:
+Заполните:
   SSH_USER = ваш пользователь
   SERVER_IP = IP сервера
 
 ────────────────────────────────────
-1. Временный ключ (Терминал на Mac)
+1. Ключ на Mac (один раз)
 ────────────────────────────────────
 
 ssh-keygen -t ed25519 -f ~/.ssh/cursor_meters_nsk -C "cursor_meters_nsk" -N ""
 
 ────────────────────────────────────
-2. Добавить ключ на сервер
+2. Публичный ключ на сервер (один раз)
 ────────────────────────────────────
 
 ssh-copy-id -i ~/.ssh/cursor_meters_nsk.pub SSH_USER@SERVER_IP
 
+Проверка:
+ssh SSH_USER@SERVER_IP "grep cursor_meters_nsk ~/.ssh/authorized_keys"
+
 ────────────────────────────────────
-3. Скопировать приватный ключ
+3. Секрет в Cursor (постоянно)
 ────────────────────────────────────
 
 cat ~/.ssh/cursor_meters_nsk | pbcopy
 
-────────────────────────────────────
-4. Cursor → Settings → Secrets
-────────────────────────────────────
+Cursor → Settings → Secrets
+  или  https://cursor.com/dashboard/cloud-agents → Secrets
 
 Имя:     SSH_PRIVATE_KEY
+Тип:     Runtime Secret
 Значение: вставить из буфера → Сохранить
+
+НЕ вставляйте ключ в чат.
+
+────────────────────────────────────
+4. Update Env (обязательно)
+────────────────────────────────────
+
+https://cursor.com/dashboard/cloud-agents
+→ Start Setup Agent → Update Existing Env
+(или Start Fresh, если окружения нет)
+
+В репо уже есть:
+  .cursor/environment.json
+  .cursor/scripts/setup-ssh.sh
 
 ────────────────────────────────────
 5. Написать агенту
@@ -37,22 +54,30 @@ cat ~/.ssh/cursor_meters_nsk | pbcopy
 готово
 
 ────────────────────────────────────
-После работы — удалить
+Почему раньше «вылетало»
 ────────────────────────────────────
 
-С сервера:
+• Ключ только на диске временной VM
+• Новая сессия = новый пустой ~/.ssh
+• Без Secrets ключ не подставляется
+
+────────────────────────────────────
+Ротация / удаление
+────────────────────────────────────
+
+Сервер:
 ssh SSH_USER@SERVER_IP "sed -i '/cursor_meters_nsk/d' ~/.ssh/authorized_keys"
 
-С Mac:
+Mac:
 rm -f ~/.ssh/cursor_meters_nsk ~/.ssh/cursor_meters_nsk.pub
 
-В Cursor:
-удалить секрет SSH_PRIVATE_KEY
+Cursor:
+удалить секрет SSH_PRIVATE_KEY → Update Env
 
 ────────────────────────────────────
 Важно
 ────────────────────────────────────
 
-• Не используйте основной ключ Mac (id_ed25519)
-• Только временный cursor_meters_nsk
+• Только временный cursor_meters_nsk, не id_ed25519
 • IP и пароли в git не коммитить
+• Secrets + Update Env = доступ на постоянной основе
